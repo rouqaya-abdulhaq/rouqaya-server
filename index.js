@@ -14,7 +14,7 @@ app.get('/', (req,res)=>{
     res.status(200).send("initial setup");
 });
 
-app.post('/postBlog', (req, res)=>{
+app.put('/postBlog', (req, res)=>{
     const title = req.body.title;
     const content = req.body.content;
     const blog = {
