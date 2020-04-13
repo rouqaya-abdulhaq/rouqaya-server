@@ -10,6 +10,10 @@ app.use(bodyParser.urlencoded({extended : false}));
 
 app.use(bodyParser.json());
 
+const blogs = [];
+
+const projects = [];
+
 app.get('/', (req,res)=>{
     res.status(200).send("initial setup");
 });
@@ -21,7 +25,8 @@ app.put('/postBlog', (req, res)=>{
         title : title,
         content : content
     }
-    res.status(200).send(blog);
+    blogs.push(blog);
+    res.status(200).send(blogs);
 });
 
 app.post('/addProject',(req,res)=>{
@@ -34,7 +39,8 @@ app.post('/addProject',(req,res)=>{
         info : info,
         imgUrl : imgUrl
     }
-    res.status(200).send(project);
+    projects.push(project)
+    res.status(200).send(projects);
 });
 
 app.listen(port, () => {
