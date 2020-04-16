@@ -5,10 +5,12 @@ const app = express();
 const port = process.env.PORT || '8000';
 
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 app.use(bodyParser.urlencoded({extended : false}));
 
 app.use(bodyParser.json());
+app.use(cors());
 
 const blogs = [];
 
@@ -26,7 +28,7 @@ app.put('/postBlog', (req, res)=>{
         content : content
     }
     blogs.push(blog);
-    res.status(200).send(blogs);
+    res.status(200).send(blog);
 });
 
 app.post('/addProject',(req,res)=>{
