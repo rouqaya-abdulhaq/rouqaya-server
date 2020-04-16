@@ -34,11 +34,13 @@ app.put('/postBlog', (req, res)=>{
 app.post('/addProject',(req,res)=>{
     const title = req.body.title;
     const info = req.body.info;
+    const url = req.body.url;
     const imgUrl = req.body.imgUrl;
 
     const project = {
         title : title,
         info : info,
+        url : url,
         imgUrl : imgUrl
     }
     projects.push(project)
