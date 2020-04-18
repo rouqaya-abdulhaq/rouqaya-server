@@ -47,6 +47,19 @@ app.post('/addProject',(req,res)=>{
     res.status(200).send(projects);
 });
 
+//INDEX WILL BE ID LATER WILL DELETE BY ID 
+app.put('/removeBlog',(req,res)=>{
+    const index = req.body.index;
+    blogs.splice(index,1);
+    res.status(200).send(blogs);
+});
+
+app.put('/removeProject',(req,res)=>{
+    const index = req.body.index;
+    projects.splice(index,1);
+    res.status(200).send(projects);
+});
+
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
 });
