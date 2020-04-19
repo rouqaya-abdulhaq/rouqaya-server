@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const queryString = require('querystring');
 
 const app = express();
 const port = process.env.PORT || '8000';
@@ -12,9 +13,18 @@ app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());
 app.use(cors());
 
-const blogs = [];
+const blogs = [{title : "blog1" , contenet : "words"},
+                {title : "blog2" , contenet : "words"},
+                {title : "blog3" , contenet : "words"},
+                {title : "blog4" , contenet : "words"},
+                {title : "blog5" , contenet : "words"}];
 
-const projects = [];
+const projects = [{title : "project1" , imgUrl: "img", url:"ufkdj", info : "info"},
+{title : "project2" , imgUrl: "img", url:"ufkdj", info : "info"},
+{title : "project3" , imgUrl: "img", url:"ufkdj", info : "info"},
+{title : "project4" , imgUrl: "img", url:"ufkdj", info : "info"},
+{title : "project5" , imgUrl: "img", url:"ufkdj", info : "info"},
+];
 
 app.get('/', (req,res)=>{
     res.status(200).send("initial setup");
@@ -58,6 +68,20 @@ app.put('/removeProject',(req,res)=>{
     const index = req.body.index;
     projects.splice(index,1);
     res.status(200).send(projects);
+});
+
+app.get('/loadProjects',(req,res)=>{
+    let beginIndex = req.query.loadCount * 10;
+    const projectCopy = [...projects];
+    const projectsToSend = projectCopy.splice(beginIndex, 10) 
+    res.status(200).send(projectsToSend);
+});
+
+app.get('/loadBlogs',(req,res)=>{
+    let beginIndex = req.query.loadCount * 10;
+    const blogCopy = [...blogs];
+    const blogsToSend = blogCopy.splice(beginIndex, 10); 
+    res.status(200).send(blogsToSend);
 });
 
 app.listen(port, () => {
