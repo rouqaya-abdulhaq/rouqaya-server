@@ -84,6 +84,16 @@ app.get('/loadBlogs',(req,res)=>{
     res.status(200).send(blogsToSend);
 });
 
+app.get('/loadBlog',(req,res)=>{
+    let blogTitle = req.query.blogTitle;
+    for(let i = 0; i < blogs.length; i++){
+        if(blogs[i].title === blogTitle){
+            res.status(200).send(blogs[i]);
+        }
+    }
+    res.send("blog not found");
+});
+
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
 });
