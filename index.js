@@ -12,18 +12,18 @@ app.use(bodyParser.urlencoded({extended : false}));
 
 app.use(bodyParser.json());
 app.use(cors());
-
+//temp until data base connection
 const blogs = [{title : "blog1" , contenet : "words"},
                 {title : "blog2" , contenet : "words"},
                 {title : "blog3" , contenet : "words"},
                 {title : "blog4" , contenet : "words"},
                 {title : "blog5" , contenet : "words"}];
 
-const projects = [{title : "project1" , imgUrl: "img", url:"ufkdj", info : "info"},
-{title : "project2" , imgUrl: "img", url:"ufkdj", info : "info"},
-{title : "project3" , imgUrl: "img", url:"ufkdj", info : "info"},
-{title : "project4" , imgUrl: "img", url:"ufkdj", info : "info"},
-{title : "project5" , imgUrl: "img", url:"ufkdj", info : "info"},
+const projects = [{title : "project1" , imgUrl: "img", url:"ufkdj", info : "info", githubUrl : "github"},
+{title : "project2" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
+{title : "project3" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
+{title : "project4" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
+{title : "project5" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
 ];
 
 app.get('/', (req,res)=>{
@@ -91,7 +91,6 @@ app.get('/loadBlog',(req,res)=>{
             res.status(200).send(blogs[i]);
         }
     }
-    res.send("blog not found");
 });
 
 app.listen(port, () => {
