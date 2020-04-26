@@ -58,14 +58,15 @@ app.post('/addProject',(req,res)=>{
 });
 
 //INDEX WILL BE ID LATER WILL DELETE BY ID 
-app.put('/removeBlog',(req,res)=>{
+app.delete('/removeBlog',(req,res)=>{
     const index = req.body.index;
     blogs.splice(index,1);
     res.status(200).send(blogs);
 });
 
-app.put('/removeProject',(req,res)=>{
+app.delete('/removeProject',(req,res)=>{
     const index = req.body.index;
+    console.log(index);
     projects.splice(index,1);
     res.status(200).send(projects);
 });
@@ -91,6 +92,28 @@ app.get('/loadBlog',(req,res)=>{
             res.status(200).send(blogs[i]);
         }
     }
+});
+
+app.put('/editProject',(req,res)=>{
+    let projectTitle = req.query.projectTitle;
+    const updatedProject = req.body.updatedProject;
+    for(let i = 0; i < projects.length; i++){
+        if(projects[i].title === projectTitle){
+            projects[i] = updatedProject;
+        }
+    }
+    res.status(200).send(projects);
+});
+
+app.put('/editBlog',(req,res)=>{
+    let blogTitle = req.query.blogTitle;
+    const updatedBlog = req.body.updatedBlog;
+    for(let i = 0; i < blogs.length; i++){
+        if(blogs[i].title === blogTitle){
+            blogs[i] = updatedBlog;
+        }
+    }
+    res.status(200).send(blogs);
 });
 
 app.listen(port, () => {
