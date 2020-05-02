@@ -13,11 +13,11 @@ app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());
 app.use(cors());
 //temp until data base connection
-const blogs = [{title : "blog1" , contenet : "words"},
-                {title : "blog2" , contenet : "words"},
-                {title : "blog3" , contenet : "words"},
-                {title : "blog4" , contenet : "words"},
-                {title : "blog5" , contenet : "words"}];
+const blogs = [{title : "blog1" , content : "words"},
+                {title : "blog2" , content : "words"},
+                {title : "blog3" , content : "words"},
+                {title : "blog4" , content : "words"},
+                {title : "blog5" , content : "words"}];
 
 const projects = [{title : "project1" , imgUrl: "img", url:"ufkdj", info : "info", githubUrl : "github"},
 {title : "project2" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
@@ -90,6 +90,16 @@ app.get('/loadBlog',(req,res)=>{
     for(let i = 0; i < blogs.length; i++){
         if(blogs[i].title === blogTitle){
             res.status(200).send(blogs[i]);
+        }
+    }
+});
+
+app.get('/loadProject',(req,res)=>{
+    let projectTitle = req.query.projectTitle;
+    for(let i = 0; i < projects.length; i++){
+        if(projects[i].title === projectTitle){
+            console.log(projects[i]);
+            res.status(200).send(projects[i]);
         }
     }
 });
