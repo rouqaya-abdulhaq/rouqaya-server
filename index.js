@@ -26,105 +26,11 @@ const projects = [{title : "project1" , imgUrl: "img", url:"ufkdj", info : "info
 {title : "project5" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
 ];
 
-app.get('/', (req,res)=>{
-    res.status(200).send("initial setup");
-});
+const projectsController = require('./controllers/projectsController');
+const blogsController = require('./controllers/blogsController');
 
-app.put('/postBlog', (req, res)=>{
-    const title = req.body.title;
-    const content = req.body.content;
-    const blog = {
-        title : title,
-        content : content
-    }
-    blogs.push(blog);
-    res.status(200).send(blog);
-});
-
-app.post('/addProject',(req,res)=>{
-    const title = req.body.title;
-    const info = req.body.info;
-    const url = req.body.url;
-    const imgUrl = req.body.imgUrl;
-
-    const project = {
-        title : title,
-        info : info,
-        url : url,
-        imgUrl : imgUrl
-    }
-    projects.push(project)
-    res.status(200).send(projects);
-});
-
-//INDEX WILL BE ID LATER WILL DELETE BY ID 
-app.delete('/removeBlog',(req,res)=>{
-    const index = req.body.index;
-    blogs.splice(index,1);
-    res.status(200).send(blogs);
-});
-
-app.delete('/removeProject',(req,res)=>{
-    const index = req.body.index;
-    console.log(index);
-    projects.splice(index,1);
-    res.status(200).send(projects);
-});
-
-app.get('/loadProjects',(req,res)=>{
-    let beginIndex = req.query.loadCount * 10;
-    const projectCopy = [...projects];
-    const projectsToSend = projectCopy.splice(beginIndex, 10) 
-    res.status(200).send(projectsToSend);
-});
-
-app.get('/loadBlogs',(req,res)=>{
-    let beginIndex = req.query.loadCount * 10;
-    const blogCopy = [...blogs];
-    const blogsToSend = blogCopy.splice(beginIndex, 10); 
-    res.status(200).send(blogsToSend);
-});
-
-app.get('/loadBlog',(req,res)=>{
-    let blogTitle = req.query.blogTitle;
-    for(let i = 0; i < blogs.length; i++){
-        if(blogs[i].title === blogTitle){
-            res.status(200).send(blogs[i]);
-        }
-    }
-});
-
-app.get('/loadProject',(req,res)=>{
-    let projectTitle = req.query.projectTitle;
-    for(let i = 0; i < projects.length; i++){
-        if(projects[i].title === projectTitle){
-            console.log(projects[i]);
-            res.status(200).send(projects[i]);
-        }
-    }
-});
-
-app.put('/editProject',(req,res)=>{
-    let projectTitle = req.query.projectTitle;
-    const updatedProject = req.body.updatedProject;
-    for(let i = 0; i < projects.length; i++){
-        if(projects[i].title === projectTitle){
-            projects[i] = updatedProject;
-        }
-    }
-    res.status(200).send(projects);
-});
-
-app.put('/editBlog',(req,res)=>{
-    let blogTitle = req.query.blogTitle;
-    const updatedBlog = req.body.updatedBlog;
-    for(let i = 0; i < blogs.length; i++){
-        if(blogs[i].title === blogTitle){
-            blogs[i] = updatedBlog;
-        }
-    }
-    res.status(200).send(blogs);
-});
+projectsController(app,projects);
+blogsController(app,blogs);
 
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
