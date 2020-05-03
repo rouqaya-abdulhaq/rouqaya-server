@@ -26,7 +26,6 @@ module.exports = (app ,projects) => {
         let projectTitle = req.query.projectTitle;
         for(let i = 0; i < projects.length; i++){
             if(projects[i].title === projectTitle){
-                console.log(projects[i]);
                 res.status(200).send(projects[i]);
             }
         }
