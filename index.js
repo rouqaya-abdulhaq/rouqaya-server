@@ -19,11 +19,11 @@ const blogs = [{title : "blog1" , content : "words"},
                 {title : "blog4" , content : "words"},
                 {title : "blog5" , content : "words"}];
 
-const projects = [{title : "project1" , imgUrl: "img", url:"ufkdj", info : "info", githubUrl : "github"},
-{title : "project2" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
-{title : "project3" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
-{title : "project4" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
-{title : "project5" , imgUrl: "img", url:"ufkdj", info : "info",githubUrl : "github"},
+const projects = [{title : "project1" , imgUrl: "", url:"ufkdj", info : "info", githubUrl : "github"},
+{title : "project2" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
+{title : "project3" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
+{title : "project4" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
+{title : "project5" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
 ];
 
 const projectsController = require('./controllers/projectsController');
