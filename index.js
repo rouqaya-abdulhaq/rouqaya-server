@@ -1,17 +1,16 @@
 const express = require("express");
-const path = require("path");
-const queryString = require('querystring');
-
 const app = express();
 const port = process.env.PORT || '8000';
 
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-app.use(bodyParser.urlencoded({extended : false}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
 
 app.use(bodyParser.json());
 app.use(cors());
+
 //temp until data base connection
 const blogs = [{title : "blog1" , content : "words"},
                 {title : "blog2" , content : "words"},
@@ -28,9 +27,12 @@ const projects = [{title : "project1" , imgUrl: "", url:"ufkdj", info : "info", 
 
 const projectsController = require('./controllers/projectsController');
 const blogsController = require('./controllers/blogsController');
+const uploadController = require('./controllers/uploadController');
 
 projectsController(app,projects);
 blogsController(app,blogs);
+uploadController(app);
+
 
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
