@@ -21,4 +21,19 @@ module.exports = (app) =>{
           res.status(400).send("No file has been sent");
         }
     });
+
+    app.get('/getImg' , (req,res) =>{
+      if(req.query.filePath){
+        const path = 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + req.query.filePath;
+        fs.access(path,fs.F_ok,(err)=>{
+          if(err){
+            res.status(404).send("No Such File Were Found");
+          }else{
+            res.status(200).sendFile(path);
+          }
+        })
+      }else {
+        res.status(400).send("no file has been specified");
+      } 
+    });
 }
