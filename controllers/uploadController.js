@@ -13,10 +13,16 @@ const storage = multer.diskStorage({
   
   const uploadDisk = multer({storage : storage});
 
-module.exports = (app) =>{
+module.exports = (app,projects) =>{
     app.post('/uploadImg',uploadDisk.single('img'),(req,res)=>{
         if(req.file){
-          res.status(200).sendFile('C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + req.file.path);
+          var result = projects.find(obj => {
+            return obj.title === req.query.title
+          })
+          const path = 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + req.file.path;
+          result.imgUrl = path;
+          console.log(projects);
+          res.status(200).send("img uploaded");
         }else{
           res.status(400).send("No file has been sent");
         }
@@ -29,7 +35,7 @@ module.exports = (app) =>{
           if(err){
             res.status(404).send("No Such File Were Found");
           }else{
-            res.status(200).sendFile(path);
+            res.status(200).send(path);
           }
         })
       }else {

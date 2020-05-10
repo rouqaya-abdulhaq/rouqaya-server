@@ -31,7 +31,7 @@ const uploadController = require('./controllers/uploadController');
 
 projectsController(app,projects);
 blogsController(app,blogs);
-uploadController(app);
+uploadController(app,projects);
 
 
 app.listen(port, () => {
