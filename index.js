@@ -27,11 +27,9 @@ const projects = [{title : "project1" , imgUrl: "", url:"ufkdj", info : "info", 
 
 const projectsController = require('./controllers/projectsController');
 const blogsController = require('./controllers/blogsController');
-const uploadController = require('./controllers/uploadController');
 
 projectsController(app,projects);
 blogsController(app,blogs);
-uploadController(app,projects);
 
 
 app.listen(port, () => {

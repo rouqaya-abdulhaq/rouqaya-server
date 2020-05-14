@@ -1,9 +1,26 @@
+const multer = require('multer');
+const fs = require('fs');
+
+const storage = multer.diskStorage({
+    destination : function(req,file,cb){
+      cb(null,'./')
+    },
+    filename : function(req,file,cb){
+      cb(null,file.originalname);
+    }
+  });
+  
+const uploadDisk = multer({storage : storage});
+//CLEAN UP REPEATED CODE
 module.exports = (app ,projects) => {
-    app.post('/addProject',(req,res)=>{
+    app.post('/addProject',uploadDisk.single('img'),(req,res)=>{
         const title = req.body.title;
         const info = req.body.info;
         const url = req.body.url;
-        const imgUrl = req.body.imgUrl;
+        let imgUrl = "";
+        if(req.file){
+            imgUrl = 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + req.file.path
+        }
     
         const project = {
             title : title,
@@ -18,7 +35,8 @@ module.exports = (app ,projects) => {
     app.get('/loadProjects',(req,res)=>{
         let beginIndex = req.query.loadCount * 10;
         const projectCopy = [...projects];
-        const projectsToSend = projectCopy.splice(beginIndex, 10) 
+        const projectsToSend = projectCopy.splice(beginIndex, 10);
+        console.log(projectsToSend); 
         res.status(200).send(projectsToSend);
     });
 
@@ -31,9 +49,17 @@ module.exports = (app ,projects) => {
         }
     });
 
-    app.put('/editProject',(req,res)=>{
+    app.put('/editProject',uploadDisk.single('img'),(req,res)=>{
         let projectTitle = req.query.projectTitle;
-        const updatedProject = req.body.updatedProject;
+        const updatedProject = {
+             title : req.body.title,
+             info : req.body.info,
+             url : req.body.url,
+             imgUrl : "",
+        };
+        if(req.file){
+            updatedProject.imgUrl = 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + req.file.path
+        }
         for(let i = 0; i < projects.length; i++){
             if(projects[i].title === projectTitle){
                 projects[i] = updatedProject;
