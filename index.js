@@ -12,17 +12,17 @@ app.use(bodyParser.json());
 app.use(cors());
 
 //temp until data base connection
-const blogs = [{title : "blog1" , content : "words"},
-                {title : "blog2" , content : "words"},
-                {title : "blog3" , content : "words"},
-                {title : "blog4" , content : "words"},
-                {title : "blog5" , content : "words"}];
+const blogs = [{id : 1,title : "blog1" , content : "words"},
+                {id:2,title : "blog2" , content : "words"},
+                {id: 3,title : "blog3" , content : "words"},
+                {id:4,title : "blog4" , content : "words"},
+                {id:5,title : "blog5" , content : "words"}];
 
-const projects = [{title : "project1" , imgUrl: "", url:"ufkdj", info : "info", githubUrl : "github"},
-{title : "project2" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
-{title : "project3" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
-{title : "project4" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
-{title : "project5" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
+const projects = [{id : 1,title : "project1" , imgUrl: "", url:"ufkdj", info : "info", githubUrl : "github"},
+{id : 2,title : "project2" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
+{id: 3,title : "project3" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
+{id:4,title : "project4" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
+{id: 5,title : "project5" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
 ];
 
 const projectsController = require('./controllers/projectsController');
