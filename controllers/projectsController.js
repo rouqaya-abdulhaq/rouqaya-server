@@ -29,7 +29,7 @@ module.exports = (app ,projects) => {
             imgUrl : imgUrl
         }
         projects.push(project)
-        res.status(200).send(projects);
+        res.status(200).send(project);
     });
 
     app.get('/loadProjects',(req,res)=>{
@@ -65,7 +65,7 @@ module.exports = (app ,projects) => {
                 projects[i] = updatedProject;
             }
         }
-        res.status(200).send(projects);
+        res.status(200).send(updatedProject);
     });
 
     app.delete('/removeProject',(req,res)=>{
