@@ -52,6 +52,7 @@ module.exports = (app ,projects) => {
     app.put('/editProject',uploadDisk.single('img'),(req,res)=>{
         let projectTitle = req.query.projectTitle;
         const updatedProject = {
+            id : req.body.id,
              title : req.body.title,
              info : req.body.info,
              url : req.body.url,
