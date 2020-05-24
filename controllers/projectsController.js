@@ -73,6 +73,6 @@ module.exports = (app ,projects) => {
         const index = req.body.index;
         console.log(index);
         projects.splice(index,1);
-        res.status(200).send(projects);
+        res.status(200).send("project removed");
     });
 }

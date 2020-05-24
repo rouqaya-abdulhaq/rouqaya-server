@@ -34,12 +34,12 @@ module.exports = (app , blogs) =>{
                 blogs[i] = updatedBlog;
             }
         }
-        res.status(200).send(blogs);
+        res.status(200).send(updatedBlog);
     });
 
     app.delete('/removeBlog',(req,res)=>{
         const index = req.body.index;
         blogs.splice(index,1);
-        res.status(200).send(blogs);
+        res.status(200).send("blog removed");
     });
 }
