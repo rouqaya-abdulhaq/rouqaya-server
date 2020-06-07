@@ -16,6 +16,12 @@ module.exports = (app , blogs) =>{
         const blogsToSend = blogCopy.splice(beginIndex, 10); 
         res.status(200).send(blogsToSend);
     });
+
+    app.get('/loadLastBlogs',(req,res)=>{
+        const blogCopy = [...blogs];
+        const blogsToSend = blogCopy.slice(-4); 
+        res.status(200).send(blogsToSend);
+    });
     
     app.get('/loadBlog',(req,res)=>{
         let blogTitle = req.query.blogTitle;
