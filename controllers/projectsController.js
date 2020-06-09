@@ -11,23 +11,10 @@ const storage = multer.diskStorage({
   });
   
 const uploadDisk = multer({storage : storage});
-//CLEAN UP REPEATED CODE
+
 module.exports = (app ,projects) => {
     app.post('/addProject',uploadDisk.single('img'),(req,res)=>{
-        const title = req.body.title;
-        const info = req.body.info;
-        const url = req.body.url;
-        let imgUrl = "";
-        if(req.file){
-            imgUrl = 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + req.file.path
-        }
-    
-        const project = {
-            title : title,
-            info : info,
-            url : url,
-            imgUrl : imgUrl
-        }
+        const project = extractProjectFromReq(req);
         projects.push(project)
         res.status(200).send(project);
     });
@@ -51,16 +38,7 @@ module.exports = (app ,projects) => {
 
     app.put('/editProject',uploadDisk.single('img'),(req,res)=>{
         let projectTitle = req.query.projectTitle;
-        const updatedProject = {
-            id : req.body.id,
-             title : req.body.title,
-             info : req.body.info,
-             url : req.body.url,
-             imgUrl : "",
-        };
-        if(req.file){
-            updatedProject.imgUrl = 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + req.file.path
-        }
+        const updatedProject = extractProjectFromReq(req);
         for(let i = 0; i < projects.length; i++){
             if(projects[i].title === projectTitle){
                 projects[i] = updatedProject;
@@ -75,4 +53,22 @@ module.exports = (app ,projects) => {
         projects.splice(index,1);
         res.status(200).send("project removed");
     });
+}
+
+const extractProjectFromReq = (req) =>{
+    return{
+        id : req.body.id,
+        title : req.body.title,
+        info : req.body.info,
+        url : req.body.url,
+        imgUrl : checkAndAssignImgUrl(req.file)
+    }
+}
+
+const checkAndAssignImgUrl = (file) =>{
+    if(file){
+        return 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + file.path;
+    }else{
+        return "";
+    }
 }
