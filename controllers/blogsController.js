@@ -1,10 +1,8 @@
 module.exports = (app , blogs) =>{
     app.put('/postBlog', (req, res)=>{
-        const title = req.body.title;
-        const content = req.body.content;
         const blog = {
-            title : title,
-            content : content
+            title : req.body.title,
+            content : req.body.content
         }
         blogs.push(blog);
         res.status(200).send(blog);
