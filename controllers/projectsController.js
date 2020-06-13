@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   
 const uploadDisk = multer({storage : storage});
 
-module.exports = (app ,projects) => {
+module.exports = (app ,projects,client) => {
     app.post('/addProject',uploadDisk.single('img'),(req,res)=>{
         const project = extractProjectFromReq(req);
         projects.push(project)
