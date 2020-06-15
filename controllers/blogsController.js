@@ -26,20 +26,13 @@ module.exports = (app , blogs, client) =>{
     });
 
     app.put('/editBlog',(req,res)=>{
-        let blogTitle = req.query.blogTitle;
         const updatedBlog = req.body.updatedBlog;
-        for(let i = 0; i < blogs.length; i++){
-            if(blogs[i].title === blogTitle){
-                blogs[i] = updatedBlog;
-            }
-        }
-        res.status(200).send(updatedBlog);
+        editBlogInDB(updatedBlog,client,res);
     });
 
     app.delete('/removeBlog',(req,res)=>{
-        const index = req.body.index;
-        blogs.splice(index,1);
-        res.status(200).send("blog removed");
+        const id = req.body.id;
+        deleteBlogFromDB(id,client,res);
     });
 }
 
@@ -50,10 +43,35 @@ const addBlogToDB = (blog,client,res) =>{
             res.status(403).send({message : "could not post blog to DB"});
         }else{
             const id = response.rows[0].id;
-            console.log(id);
             getBlogFromDB(id,client,res);
         }
     })
+}
+
+const editBlogInDB = (editBlog , client,res) =>{
+    const query = editingBlogQuery(editBlog);
+    client.query(query,(err, response)=>{
+        if(err){
+            res.status(403).send({message : "could not edit blog in DB"});
+        }else{
+            if(response.rows[0]){
+                const id = response.rows[0].id;
+                getBlogFromDB(id,client,res);
+            }else{
+                res.status(403).send({message : "the id provided does not match any blog"});
+            }
+        }
+    });
+}
+
+const deleteBlogFromDB = (blogId, client, res) =>{
+    client.query(`DELETE FROM blogs WHERE id = '${blogId}'`,(err, response)=>{
+        if(err){
+            res.status(403).send({message : "could not delete blog from DB"});
+        }else{
+            res.status(204).send(response);
+        }
+    });
 }
 
 const getBlogFromDB = (blogId, client, res) =>{
@@ -74,4 +92,9 @@ const postBlogQuery = (blog) =>{
     return `INSERT INTO blogs(title,content)
     VALUES('${blog.title}','${blog.content}') 
     RETURNING id`; 
+}
+
+const editingBlogQuery = (editedBlog) =>{
+    return `UPDATE blogs SET title = '${editedBlog.title}',content = '${editedBlog.content}'
+    WHERE id = '${editedBlog.id}' RETURNING id`;
 }
