@@ -4,8 +4,7 @@ module.exports = (app , blogs, client) =>{
             title : req.body.title,
             content : req.body.content
         }
-        blogs.push(blog);
-        res.status(200).send(blog);
+        addBlogToDB(blog,client,res);
     });
 
     app.get('/loadBlogs',(req,res)=>{
@@ -22,12 +21,8 @@ module.exports = (app , blogs, client) =>{
     });
     
     app.get('/loadBlog',(req,res)=>{
-        let blogTitle = req.query.blogTitle;
-        for(let i = 0; i < blogs.length; i++){
-            if(blogs[i].title === blogTitle){
-                res.status(200).send(blogs[i]);
-            }
-        }
+        let blogId = req.query.blogId;
+        getBlogFromDB(blogId,client,res);
     });
 
     app.put('/editBlog',(req,res)=>{
@@ -46,4 +41,37 @@ module.exports = (app , blogs, client) =>{
         blogs.splice(index,1);
         res.status(200).send("blog removed");
     });
+}
+
+const addBlogToDB = (blog,client,res) =>{
+    const query = postBlogQuery(blog);
+    client.query(query,(err,response)=>{
+        if(err){
+            res.status(403).send({message : "could not post blog to DB"});
+        }else{
+            const id = response.rows[0].id;
+            console.log(id);
+            getBlogFromDB(id,client,res);
+        }
+    })
+}
+
+const getBlogFromDB = (blogId, client, res) =>{
+    client.query(`SELECT * FROM blogs WHERE id = '${blogId}'`,(err, response)=>{
+        if(err){
+            res.status(403).send({message : "could not get blog from DB"});
+        }else{
+            if(response.rows[0]){
+                res.status(200).send(response.rows[0]); 
+            }else{
+                res.status(403).send({message : "the provided id does not match any blog"}); 
+            }
+        }
+    })
+}
+
+const postBlogQuery = (blog) =>{
+    return `INSERT INTO blogs(title,content)
+    VALUES('${blog.title}','${blog.content}') 
+    RETURNING id`; 
 }
