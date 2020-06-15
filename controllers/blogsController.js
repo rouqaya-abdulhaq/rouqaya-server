@@ -6,18 +6,13 @@ module.exports = (app , blogs, client) =>{
         }
         addBlogToDB(blog,client,res);
     });
-
+    //calculate load count to send 10 blogs from count
     app.get('/loadBlogs',(req,res)=>{
-        let beginIndex = req.query.loadCount * 10;
-        const blogCopy = [...blogs];
-        const blogsToSend = blogCopy.splice(beginIndex, 10); 
-        res.status(200).send(blogsToSend);
+        getLastTenBlogs(client,res);
     });
 
     app.get('/loadLastBlogs',(req,res)=>{
-        const blogCopy = [...blogs];
-        const blogsToSend = blogCopy.slice(-4); 
-        res.status(200).send(blogsToSend);
+        getLastFourBlogs(client,res);
     });
     
     app.get('/loadBlog',(req,res)=>{
@@ -88,6 +83,28 @@ const getBlogFromDB = (blogId, client, res) =>{
     })
 }
 
+const getLastTenBlogs = (client,res) =>{
+    const query = getBlogsQuery(10);
+    client.query(query,(err ,response)=>{
+        if(err){
+            res.status(403).send({message : "could not load blogs from DB"});
+        }else{
+            res.status(200).send(response.rows);
+        }
+    })
+}
+
+const getLastFourBlogs = (client,res) =>{
+    const query = getBlogsQuery(4);
+    client.query(query,(err ,response)=>{
+        if(err){
+            res.status(403).send({message : "could not load blogs from DB"});
+        }else{
+            res.status(200).send(response.rows);
+        }
+    })
+}
+
 const postBlogQuery = (blog) =>{
     return `INSERT INTO blogs(title,content)
     VALUES('${blog.title}','${blog.content}') 
@@ -97,4 +114,8 @@ const postBlogQuery = (blog) =>{
 const editingBlogQuery = (editedBlog) =>{
     return `UPDATE blogs SET title = '${editedBlog.title}',content = '${editedBlog.content}'
     WHERE id = '${editedBlog.id}' RETURNING id`;
+}
+
+const getBlogsQuery = (limit) =>{
+    return `SELECT * FROM blogs ORDER BY id DESC LIMIT ${limit}`;
 }
