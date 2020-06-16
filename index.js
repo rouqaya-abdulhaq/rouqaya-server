@@ -21,11 +21,6 @@ const client = new pg.Client({
 client.connect();
 
 //temp until data base connection
-const blogs = [{id : 1,title : "blog1" , content : "words"},
-                {id:2,title : "blog2" , content : "words"},
-                {id: 3,title : "blog3" , content : "words"},
-                {id:4,title : "blog4" , content : "words"},
-                {id:5,title : "blog5" , content : "words"}];
 
 const projects = [{id : 1,title : "project1" , imgUrl: "", url:"ufkdj", info : "info", githubUrl : "github"},
 {id : 2,title : "project2" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
@@ -38,7 +33,7 @@ const projectsController = require('./controllers/projectsController');
 const blogsController = require('./controllers/blogsController');
 
 projectsController(app,projects,client);
-blogsController(app,blogs,client);
+blogsController(app,client);
 
 
 app.listen(port, () => {

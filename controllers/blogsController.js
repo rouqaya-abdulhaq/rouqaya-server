@@ -1,4 +1,4 @@
-module.exports = (app , blogs, client) =>{
+module.exports = (app , client) =>{
     app.put('/postBlog', (req, res)=>{
         const blog = {
             title : req.body.title,
