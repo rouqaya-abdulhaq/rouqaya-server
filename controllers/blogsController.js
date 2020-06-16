@@ -125,5 +125,5 @@ const getLastBlogsQuery = (limit) =>{
 const getBlogsQuery = (count) =>{
     const startIndex = count * 10;
     const endIndex = startIndex + 10;
-    return `SELECT * FROM blogs WHERE id <= '${endIndex}' AND id >= '${startIndex}'`;
+    return `SELECT * FROM blogs WHERE id <= '${endIndex}' AND id > '${startIndex}'`;
 }

@@ -20,19 +20,10 @@ const client = new pg.Client({
 
 client.connect();
 
-//temp until data base connection
-
-const projects = [{id : 1,title : "project1" , imgUrl: "", url:"ufkdj", info : "info", githubUrl : "github"},
-{id : 2,title : "project2" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
-{id: 3,title : "project3" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
-{id:4,title : "project4" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
-{id: 5,title : "project5" , imgUrl: "", url:"ufkdj", info : "info",githubUrl : "github"},
-];
-
 const projectsController = require('./controllers/projectsController');
 const blogsController = require('./controllers/blogsController');
 
-projectsController(app,projects,client);
+projectsController(app,client);
 blogsController(app,client);
 
 

@@ -12,18 +12,15 @@ const storage = multer.diskStorage({
   
 const uploadDisk = multer({storage : storage});
 
-module.exports = (app ,projects,client) => {
+module.exports = (app ,client) => {
     app.post('/addProject',uploadDisk.single('img'),(req,res)=>{
         const project = extractProjectFromReq(req);
         addProjectToDB(project,client,res);
     });
 
     app.get('/loadProjects',(req,res)=>{
-        let beginIndex = req.query.loadCount * 10;
-        const projectCopy = [...projects];
-        const projectsToSend = projectCopy.splice(beginIndex, 10);
-        console.log(projectsToSend); 
-        res.status(200).send(projectsToSend);
+        const loadCount = req.query.loadCount;
+        getProjects(loadCount,client,res);
     });
 
     app.get('/loadProject',(req,res)=>{
@@ -114,6 +111,18 @@ const getProjectFromDB = (projectId, client, res) => {
     });
 }
 
+const getProjects = (count,client,res) =>{
+    const query = getProjectsQuery(count);
+    client.query(query,(err ,response)=>{
+        if(err){
+            console.log(err);
+            res.status(403).send({message : "could not load projects from DB"});
+        }else{
+            res.status(200).send(response.rows);
+        }
+    })
+}
+
 const addProjectQuery = (project) =>{
     return `INSERT INTO projects(title,info,url,github)
     VALUES('${project.title}','${project.info}','${project.url}','${project.github}') 
@@ -124,4 +133,10 @@ const editingProjectQuery = (editedProject) =>{
     return `UPDATE projects SET title = '${editedProject.title}',info = '${editedProject.info}',
     url = '${editedProject.url}', github = '${editedProject.github}'
     WHERE id = '${editedProject.id}' RETURNING id`;
+}
+
+const getProjectsQuery = (count) =>{
+    const startIndex = count * 4;
+    const endIndex = startIndex + 4;
+    return `SELECT * FROM projects WHERE id <= '${endIndex}' AND id > '${startIndex}'`;
 }
