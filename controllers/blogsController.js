@@ -6,9 +6,10 @@ module.exports = (app , blogs, client) =>{
         }
         addBlogToDB(blog,client,res);
     });
-    //calculate load count to send 10 blogs from count
+    
     app.get('/loadBlogs',(req,res)=>{
-        getLastTenBlogs(client,res);
+        const loadCount = req.query.loadCount;
+        getBlogs(loadCount,client,res);
     });
 
     app.get('/loadLastBlogs',(req,res)=>{
@@ -83,10 +84,11 @@ const getBlogFromDB = (blogId, client, res) =>{
     })
 }
 
-const getLastTenBlogs = (client,res) =>{
-    const query = getBlogsQuery(10);
+const getBlogs = (count,client,res) =>{
+    const query = getBlogsQuery(count);
     client.query(query,(err ,response)=>{
         if(err){
+            console.log(err);
             res.status(403).send({message : "could not load blogs from DB"});
         }else{
             res.status(200).send(response.rows);
@@ -95,7 +97,7 @@ const getLastTenBlogs = (client,res) =>{
 }
 
 const getLastFourBlogs = (client,res) =>{
-    const query = getBlogsQuery(4);
+    const query = getLastBlogsQuery(4);
     client.query(query,(err ,response)=>{
         if(err){
             res.status(403).send({message : "could not load blogs from DB"});
@@ -116,6 +118,12 @@ const editingBlogQuery = (editedBlog) =>{
     WHERE id = '${editedBlog.id}' RETURNING id`;
 }
 
-const getBlogsQuery = (limit) =>{
+const getLastBlogsQuery = (limit) =>{
     return `SELECT * FROM blogs ORDER BY id DESC LIMIT ${limit}`;
+}
+
+const getBlogsQuery = (count) =>{
+    const startIndex = count * 10;
+    const endIndex = startIndex + 10;
+    return `SELECT * FROM blogs WHERE id <= '${endIndex}' AND id >= '${startIndex}'`;
 }
