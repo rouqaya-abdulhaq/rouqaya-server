@@ -32,21 +32,13 @@ module.exports = (app ,projects,client) => {
     });
 
     app.put('/editProject',uploadDisk.single('img'),(req,res)=>{
-        let projectTitle = req.query.projectTitle;
         const updatedProject = extractProjectFromReq(req);
-        for(let i = 0; i < projects.length; i++){
-            if(projects[i].title === projectTitle){
-                projects[i] = updatedProject;
-            }
-        }
-        res.status(200).send(updatedProject);
+        editProjectInDB(updatedProject,client,res);
     });
 
     app.delete('/removeProject',(req,res)=>{
-        const index = req.body.index;
-        console.log(index);
-        projects.splice(index,1);
-        res.status(200).send("project removed");
+        const id = req.body.id;
+        deleteProjectFromDB(id,client,res);
     });
 }
 
@@ -82,6 +74,32 @@ const addProjectToDB = (project,client,res) =>{
     });
 }
 
+const editProjectInDB = (editedProject , client,res) =>{
+    const query = editingProjectQuery(editedProject);
+    client.query(query,(err, response)=>{
+        if(err){
+            res.status(403).send({message : "could not edit project in DB"});
+        }else{
+            if(response.rows[0]){
+                const id = response.rows[0].id;
+                getProjectFromDB(id,client,res);
+            }else{
+                res.status(403).send({message : "the id provided does not match any project"});
+            }
+        }
+    });
+}
+
+const deleteProjectFromDB = (projectId, client, res) =>{
+    client.query(`DELETE FROM projects WHERE id = '${projectId}'`,(err, response)=>{
+        if(err){
+            res.status(403).send({message : "could not delete project from DB"});
+        }else{
+            res.status(204).send(response);
+        }
+    });
+}
+
 const getProjectFromDB = (projectId, client, res) => {
     client.query(`SELECT * FROM projects WHERE id = '${projectId}'`,(err, response)=>{
         if(err){
@@ -100,4 +118,10 @@ const addProjectQuery = (project) =>{
     return `INSERT INTO projects(title,info,url,github)
     VALUES('${project.title}','${project.info}','${project.url}','${project.github}') 
     RETURNING id`; 
+}
+
+const editingProjectQuery = (editedProject) =>{
+    return `UPDATE projects SET title = '${editedProject.title}',info = '${editedProject.info}',
+    url = '${editedProject.url}', github = '${editedProject.github}'
+    WHERE id = '${editedProject.id}' RETURNING id`;
 }
