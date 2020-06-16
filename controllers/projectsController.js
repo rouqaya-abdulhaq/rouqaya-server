@@ -15,8 +15,7 @@ const uploadDisk = multer({storage : storage});
 module.exports = (app ,projects,client) => {
     app.post('/addProject',uploadDisk.single('img'),(req,res)=>{
         const project = extractProjectFromReq(req);
-        projects.push(project)
-        res.status(200).send(project);
+        addProjectToDB(project,client,res);
     });
 
     app.get('/loadProjects',(req,res)=>{
@@ -28,12 +27,8 @@ module.exports = (app ,projects,client) => {
     });
 
     app.get('/loadProject',(req,res)=>{
-        let projectTitle = req.query.projectTitle;
-        for(let i = 0; i < projects.length; i++){
-            if(projects[i].title === projectTitle){
-                res.status(200).send(projects[i]);
-            }
-        }
+        let projectId = req.query.projectId;
+        getProjectFromDB(projectId,client,res);
     });
 
     app.put('/editProject',uploadDisk.single('img'),(req,res)=>{
@@ -61,6 +56,7 @@ const extractProjectFromReq = (req) =>{
         title : req.body.title,
         info : req.body.info,
         url : req.body.url,
+        github : req.body.github,
         imgUrl : checkAndAssignImgUrl(req.file)
     }
 }
@@ -71,4 +67,37 @@ const checkAndAssignImgUrl = (file) =>{
     }else{
         return "";
     }
+}
+
+const addProjectToDB = (project,client,res) =>{
+    const query = addProjectQuery(project);
+    client.query(query,(err,response)=>{
+        if(err){
+            res.status(403).send({message : "could not post project to DB"});
+        }else{
+            const id = response.rows[0].id;
+            console.log(id);
+            getProjectFromDB(id,client,res);
+        }
+    });
+}
+
+const getProjectFromDB = (projectId, client, res) => {
+    client.query(`SELECT * FROM projects WHERE id = '${projectId}'`,(err, response)=>{
+        if(err){
+            res.status(403).send({message : "could not get project from DB"});
+        }else{
+            if(response.rows[0]){
+                res.status(200).send(response.rows[0]); 
+            }else{
+                res.status(403).send({message : "the provided id does not match any project"}); 
+            }
+        }
+    });
+}
+
+const addProjectQuery = (project) =>{
+    return `INSERT INTO projects(title,info,url,github)
+    VALUES('${project.title}','${project.info}','${project.url}','${project.github}') 
+    RETURNING id`; 
 }
