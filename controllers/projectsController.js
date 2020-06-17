@@ -1,14 +1,7 @@
 const multer = require('multer');
 const fs = require('fs');
 
-const storage = multer.diskStorage({
-    destination : function(req,file,cb){
-      cb(null,'./')
-    },
-    filename : function(req,file,cb){
-      cb(null,file.originalname);
-    }
-  });
+const storage = multer.memoryStorage();
   
 const uploadDisk = multer({storage : storage});
 
@@ -46,17 +39,17 @@ const extractProjectFromReq = (req) =>{
         info : req.body.info,
         url : req.body.url,
         github : req.body.github,
-        imgUrl : checkAndAssignImgUrl(req.file)
+        img : req.file
     }
 }
 
-const checkAndAssignImgUrl = (file) =>{
-    if(file){
-        return 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + file.path;
-    }else{
-        return "";
-    }
-}
+// const checkAndAssignImgUrl = (file) =>{
+//     if(file){
+//         return 'C:\\Users\\acer\\Desktop\\projects\\rouqaya-server\\' + file.path;
+//     }else{
+//         return "";
+//     }
+// }
 
 const addProjectToDB = (project,client,res) =>{
     const query = addProjectQuery(project);
@@ -65,10 +58,27 @@ const addProjectToDB = (project,client,res) =>{
             res.status(403).send({message : "could not post project to DB"});
         }else{
             const id = response.rows[0].id;
-            console.log(id);
-            getProjectFromDB(id,client,res);
+            if(addProjectImg(project.img,client,id)){
+                getProjectFromDB(id,client,res);  
+            }
+            else{
+                res.status(403).send({message : "could not upload img to DB"})
+            }
         }
     });
+}
+
+const addProjectImg = (imgFile,client,projectId) =>{
+    const query = postProjectImgQuery(imgFile,projectId);
+    client.query(query,(err,response)=>{
+        if(err){
+            console.log(err);
+            return false;
+        }else{
+            console.log(response);
+            return true;
+        }
+    })
 }
 
 const editProjectInDB = (editedProject , client,res) =>{
@@ -139,4 +149,10 @@ const getProjectsQuery = (count) =>{
     const startIndex = count * 4;
     const endIndex = startIndex + 4;
     return `SELECT * FROM projects WHERE id <= '${endIndex}' AND id > '${startIndex}'`;
+}
+
+const postProjectImgQuery = (img,projectId) =>{
+    return `INSERT INTO project_img(type,name,data,project_id)
+    VALUES('img/png','${img.originalname}','${img}','${projectId}') 
+    RETURNING id`; 
 }
