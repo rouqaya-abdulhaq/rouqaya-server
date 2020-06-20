@@ -1,8 +1,10 @@
+
 module.exports = (app , client) =>{
-    app.put('/postBlog', (req, res)=>{
+    app.put('/postBlog' ,(req, res)=>{
         const blog = {
             title : req.body.title,
-            content : req.body.content
+            content : req.body.content,
+            imgUrl : req.body.imgUrl,
         }
         addBlogToDB(blog,client,res);
     });
@@ -36,6 +38,7 @@ const addBlogToDB = (blog,client,res) =>{
     const query = postBlogQuery(blog);
     client.query(query,(err,response)=>{
         if(err){
+            console.log(err);
             res.status(403).send({message : "could not post blog to DB"});
         }else{
             const id = response.rows[0].id;
@@ -108,13 +111,13 @@ const getLastFourBlogs = (client,res) =>{
 }
 
 const postBlogQuery = (blog) =>{
-    return `INSERT INTO blogs(title,content)
-    VALUES('${blog.title}','${blog.content}') 
+    return `INSERT INTO blogs(title,content,img_url)
+    VALUES('${blog.title}','${blog.content}','${blog.imgUrl}') 
     RETURNING id`; 
 }
 
 const editingBlogQuery = (editedBlog) =>{
-    return `UPDATE blogs SET title = '${editedBlog.title}',content = '${editedBlog.content}'
+    return `UPDATE blogs SET title = '${editedBlog.title}',content = '${editedBlog.content}',img_url = '${editedBlog.imgUrl}'
     WHERE id = '${editedBlog.id}' RETURNING id`;
 }
 
