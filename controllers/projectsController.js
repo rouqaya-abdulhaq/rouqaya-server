@@ -67,9 +67,12 @@ const editProjectInDB = (editedProject , client,res) =>{
 const deleteProjectFromDB = (projectId, client, res) =>{
     client.query(`DELETE FROM projects WHERE id = '${projectId}'`,(err, response)=>{
         if(err){
-            res.status(403).send({message : "could not delete project from DB"});
+            res.status(403).send({message : "could not delete project from DB", success : false});
         }else{
-            res.status(204).send(response);
+            const serverRes = {
+                success : true
+            }
+            res.status(204).send(serverRes);
         }
     });
 }
@@ -80,7 +83,12 @@ const getProjectFromDB = (projectId, client, res) => {
             res.status(403).send({message : "could not get project from DB"});
         }else{
             if(response.rows[0]){
-                res.status(200).send(response.rows[0]); 
+                const serverRes = {
+                    project : {
+                        ...response.rows[0]
+                    }
+                }
+                res.status(200).send(serverRes); 
             }else{
                 res.status(403).send({message : "the provided id does not match any project"}); 
             }
@@ -95,7 +103,12 @@ const getProjects = (count,client,res) =>{
             console.log(err);
             res.status(403).send({message : "could not load projects from DB"});
         }else{
-            res.status(200).send(response.rows);
+            const serverRes = {
+                projects : [
+                    ...response.rows
+                ]
+            }
+            res.status(200).send(serverRes);
         }
     })
 }
