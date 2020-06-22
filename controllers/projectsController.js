@@ -127,6 +127,5 @@ const editingProjectQuery = (editedProject) =>{
 
 const getProjectsQuery = (count) =>{
     const startIndex = count * 4;
-    const endIndex = startIndex + 4;
-    return `SELECT * FROM projects WHERE id <= '${endIndex}' AND id > '${startIndex}'`;
+    return `SELECT * FROM projects WHERE id >= '${startIndex}' LIMIT 4`;
 }
