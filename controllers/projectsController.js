@@ -1,6 +1,6 @@
 module.exports = (app ,client) => {
     app.post('/addProject',(req,res)=>{
-        const project = extractProjectFromReq(req);
+        const project = req.body.project;
         addProjectToDB(project,client,res);
     });
 
@@ -15,7 +15,7 @@ module.exports = (app ,client) => {
     });
 
     app.put('/editProject',(req,res)=>{
-        const updatedProject = extractProjectFromReq(req);
+        const updatedProject = req.body.updatedProject;
         editProjectInDB(updatedProject,client,res);
     });
 
@@ -25,25 +25,51 @@ module.exports = (app ,client) => {
     });
 }
 
-const extractProjectFromReq = (req) =>{
-    return{
-        id : req.body.id,
-        title : req.body.title,
-        info : req.body.info,
-        url : req.body.url,
-        github : req.body.github,
-        imgUrl : req.body.imgUrl
-    }
-}
-
 const addProjectToDB = (project,client,res) =>{
     const query = addProjectQuery(project);
     client.query(query,(err,response)=>{
         if(err){
-            res.status(403).send({message : "could not post project to DB"});
+            res.status(500).send({message : "could not post project to DB", success : false});
         }else{
             const id = response.rows[0].id;
             getProjectFromDB(id,client,res);  
+        }
+    });
+}
+
+const getProjects = (count,client,res) =>{
+    const query = getProjectsQuery(count);
+    client.query(query,(err ,response)=>{
+        if(err){
+            res.status(500).send({message : "could not load projects from DB", success : false});
+        }else{
+            const serverRes = {
+                projects : [
+                    ...response.rows
+                ],
+                success : true
+            }
+            res.status(200).send(serverRes);
+        }
+    })
+}
+
+const getProjectFromDB = (projectId, client, res) => {
+    client.query(`SELECT * FROM projects WHERE id = '${projectId}'`,(err, response)=>{
+        if(err){
+            res.status(500).send({message : "could not get project from DB", success : false});
+        }else{
+            if(response.rows[0]){
+                const serverRes = {
+                    project : {
+                        ...response.rows[0]
+                    },
+                    success : true
+                }
+                res.status(200).send(serverRes); 
+            }else{
+                res.status(400).send({message : "the provided id does not match any project", success : false}); 
+            }
         }
     });
 }
@@ -52,13 +78,13 @@ const editProjectInDB = (editedProject , client,res) =>{
     const query = editingProjectQuery(editedProject);
     client.query(query,(err, response)=>{
         if(err){
-            res.status(403).send({message : "could not edit project in DB"});
+            res.status(500).send({message : "could not edit project in DB", success : false});
         }else{
             if(response.rows[0]){
                 const id = response.rows[0].id;
                 getProjectFromDB(id,client,res);
             }else{
-                res.status(403).send({message : "the id provided does not match any project"});
+                res.status(400).send({message : "the id provided does not match any project", success : false});
             }
         }
     });
@@ -67,7 +93,7 @@ const editProjectInDB = (editedProject , client,res) =>{
 const deleteProjectFromDB = (projectId, client, res) =>{
     client.query(`DELETE FROM projects WHERE id = '${projectId}'`,(err, response)=>{
         if(err){
-            res.status(403).send({message : "could not delete project from DB", success : false});
+            res.status(500).send({message : "could not delete project from DB", success : false});
         }else{
             const serverRes = {
                 success : true
@@ -77,41 +103,6 @@ const deleteProjectFromDB = (projectId, client, res) =>{
     });
 }
 
-const getProjectFromDB = (projectId, client, res) => {
-    client.query(`SELECT * FROM projects WHERE id = '${projectId}'`,(err, response)=>{
-        if(err){
-            res.status(403).send({message : "could not get project from DB"});
-        }else{
-            if(response.rows[0]){
-                const serverRes = {
-                    project : {
-                        ...response.rows[0]
-                    }
-                }
-                res.status(200).send(serverRes); 
-            }else{
-                res.status(403).send({message : "the provided id does not match any project"}); 
-            }
-        }
-    });
-}
-
-const getProjects = (count,client,res) =>{
-    const query = getProjectsQuery(count);
-    client.query(query,(err ,response)=>{
-        if(err){
-            console.log(err);
-            res.status(403).send({message : "could not load projects from DB"});
-        }else{
-            const serverRes = {
-                projects : [
-                    ...response.rows
-                ]
-            }
-            res.status(200).send(serverRes);
-        }
-    })
-}
 
 const addProjectQuery = (project) =>{
     return `INSERT INTO projects(title,info,url,github,img_url)
@@ -119,13 +110,13 @@ const addProjectQuery = (project) =>{
     RETURNING id`; 
 }
 
+const getProjectsQuery = (count) =>{
+    const startIndex = count * 4;
+    return `SELECT * FROM projects WHERE id >= '${startIndex}' LIMIT 4`;
+}
+
 const editingProjectQuery = (editedProject) =>{
     return `UPDATE projects SET title = '${editedProject.title}',info = '${editedProject.info}',
     url = '${editedProject.url}', github = '${editedProject.github}', img_url = '${editedProject.imgUrl}'
     WHERE id = '${editedProject.id}' RETURNING id`;
-}
-
-const getProjectsQuery = (count) =>{
-    const startIndex = count * 4;
-    return `SELECT * FROM projects WHERE id >= '${startIndex}' LIMIT 4`;
 }
