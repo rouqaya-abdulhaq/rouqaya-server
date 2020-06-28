@@ -120,7 +120,7 @@ const deleteBlogFromDB = (blogId, client, res) =>{
             const serverRes = {
                 success : true
             }
-            res.status(204).send(serverRes);
+            res.status(200).send(serverRes);
         }
     });
 }
