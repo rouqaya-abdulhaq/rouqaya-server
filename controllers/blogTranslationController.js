@@ -1,7 +1,11 @@
 module.exports = (app,client) => {
     app.post('/translateBlogArabic' , (req , res)=>{
         const translatedBlog = req.body.translatedBlog;
-        addArabicBlogToDB(translatedBlog,client,res);
+        if(translatedBlog.edit){
+            editArabicBlogInDB(translatedBlog,client,res)
+        }else{
+            addArabicBlogToDB(translatedBlog,client,res);
+        }
     });
 
 }
@@ -38,8 +42,29 @@ const addArabicBlogToDB = (blog,client,res) =>{
     })
 }
 
+const editArabicBlogInDB = (editBlog , client,res) =>{
+    const query = editingArabicBlogQuery(editBlog);
+    client.query(query,(err, response)=>{
+        if(err){
+            res.status(500).send({message : "could not edit blog in DB", success : false});
+        }else{
+            if(response.rows[0]){
+                const id = response.rows[0].id;
+                getArabicBlogFromDB(id,client,res);
+            }else{
+                res.status(400).send({message : "the id provided does not match any blog", success : false});
+            }
+        }
+    });
+}
+
 const postArabicBlogQuery = (blog) =>{
     return `INSERT INTO arabic_blogs(id,title,content)
     VALUES('${blog.id}','${blog.title}','${blog.content}') 
     RETURNING id`; 
+}
+
+const editingArabicBlogQuery = (editedBlog) =>{
+    return `UPDATE arabic_blogs SET title = '${editedBlog.title}',content = '${editedBlog.content}'
+    WHERE id = '${editedBlog.id}' RETURNING id`;
 }
