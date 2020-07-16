@@ -22,10 +22,11 @@ client.connect();
 
 const projectsController = require('./controllers/projectsController');
 const blogsController = require('./controllers/blogsController');
+const blogTranslationController = require('./controllers/blogTranslationController');
 
 projectsController(app,client);
 blogsController(app,client);
-
+blogTranslationController(app,client);
 
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
