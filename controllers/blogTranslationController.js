@@ -8,6 +8,10 @@ module.exports = (app,client) => {
         }
     });
 
+    app.get('/getArabicBlog',(req,res)=>{
+        const blogId = req.body.data.blogId;
+        getArabicBlogFromDB(blogId,client,res); 
+    })
 }
 
 const getArabicBlogFromDB = (blogId, client, res) =>{
