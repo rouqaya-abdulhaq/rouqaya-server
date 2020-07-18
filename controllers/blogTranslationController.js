@@ -1,15 +1,16 @@
 module.exports = (app,client) => {
     app.post('/translateBlogArabic' , (req , res)=>{
         const translatedBlog = req.body.translatedBlog;
-        if(translatedBlog.edit){
-            editArabicBlogInDB(translatedBlog,client,res)
-        }else{
-            addArabicBlogToDB(translatedBlog,client,res);
-        }
+        addArabicBlogToDB(translatedBlog,client,res);
     });
 
+    app.post('/EditBlogArabic' , (req , res)=>{
+        const translatedBlog = req.body.translatedBlog;
+        editArabicBlogInDB(translatedBlog,client,res);
+    });    
+
     app.get('/getArabicBlog',(req,res)=>{
-        const blogId = req.body.data.blogId;
+        const blogId = req.query.blogId;
         getArabicBlogFromDB(blogId,client,res); 
     })
 }
