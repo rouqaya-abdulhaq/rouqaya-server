@@ -12,7 +12,12 @@ module.exports = (app,client) => {
     app.get('/getArabicBlog',(req,res)=>{
         const blogId = req.query.blogId;
         getArabicBlogFromDB(blogId,client,res); 
-    })
+    });
+
+    app.get('/getArabicBlogs',(req,res)=>{
+        const loadCount = req.query.loadCount;
+        getArabicBlogs(loadCount,client,res); 
+    });
 }
 
 const getArabicBlogFromDB = (blogId, client, res) =>{
@@ -63,6 +68,23 @@ const editArabicBlogInDB = (editBlog , client,res) =>{
     });
 }
 
+const getArabicBlogs = (loadCount, client, res) =>{
+    const query = getArabicBlogsQuery(loadCount);
+    client.query(query,(err ,response)=>{
+        if(err){
+            res.status(500).send({message : "could not load blogs from DB", success : false});
+        }else{
+            const serverRes = {
+                blogs : [
+                    ...response.rows
+                ],
+                success : true
+            }
+            res.status(200).send(serverRes);
+        }
+    })
+}
+
 const postArabicBlogQuery = (blog) =>{
     return `INSERT INTO arabic_blogs(id,title,content)
     VALUES('${blog.id}','${blog.title}','${blog.content}') 
@@ -72,4 +94,9 @@ const postArabicBlogQuery = (blog) =>{
 const editingArabicBlogQuery = (editedBlog) =>{
     return `UPDATE arabic_blogs SET title = '${editedBlog.title}',content = '${editedBlog.content}'
     WHERE id = '${editedBlog.id}' RETURNING id`;
+}
+
+const getArabicBlogsQuery = (count) =>{
+    const startIndex = count * 10;
+    return `SELECT * FROM arabic_blogs WHERE id >= '${startIndex}' LIMIT 10`;
 }
