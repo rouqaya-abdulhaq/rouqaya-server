@@ -68,8 +68,12 @@ const getBlogsCount = (client,res) =>{
         if(err){
             res.status(500).send({message : "could not get blogs count from DB", success : false})
         }else{
+            let count = response.rows[0].count < 10 ? 0 : response.rows[0].count / 10;
+            if(response.rows[0].count % 10 >= 1 && response.rows[0].count > 10){
+                count += 1
+            }
             const data = {
-                count : response.rows[0].count,
+                count : count,
                 success : true
             }
             res.status(200).send(data);
