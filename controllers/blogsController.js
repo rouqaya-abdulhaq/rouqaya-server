@@ -10,6 +10,10 @@ module.exports = (app , client) =>{
         getBlogs(loadCount,client,res);
     });
 
+    app.get('/getBlogsCount',(req,res)=>{
+        getBlogsCount(client,res);
+    });
+
     app.get('/loadLastBlogs',(req,res)=>{
         getLastFourBlogs(client,res);
     });
@@ -57,6 +61,20 @@ const getBlogs = (count,client,res) =>{
             res.status(200).send(serverRes);
         }
     })
+}
+
+const getBlogsCount = (client,res) =>{
+    client.query('SELECT COUNT(*) FROM blogs',(err,response)=>{
+        if(err){
+            res.status(500).send({message : "could not get blogs count from DB", success : false})
+        }else{
+            const data = {
+                count : response.rows[0].count,
+                success : true
+            }
+            res.status(200).send(data);
+        }
+    });
 }
 
 const getLastFourBlogs = (client,res) =>{
