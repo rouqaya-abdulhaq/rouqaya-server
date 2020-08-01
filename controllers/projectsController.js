@@ -9,6 +9,10 @@ module.exports = (app ,client) => {
         getProjects(loadCount,client,res);
     });
 
+    app.get('/getProjectsCount',(req,res)=>{
+        getProjectsCount(client,res);
+    });
+
     app.get('/loadProject',(req,res)=>{
         let projectId = req.query.projectId;
         getProjectFromDB(projectId,client,res);
@@ -52,6 +56,24 @@ const getProjects = (count,client,res) =>{
             res.status(200).send(serverRes);
         }
     })
+}
+
+const getProjectsCount = (client,res) =>{
+    client.query('SELECT COUNT(*) FROM projects',(err,response)=>{
+        if(err){
+            res.status(500).send({message : "could not get projects count from DB", success : false})
+        }else{
+            let count = response.rows[0].count < 10 ? 0 : response.rows[0].count / 10;
+            if(response.rows[0].count % 10 >= 1 && response.rows[0].count > 10){
+                count += 1
+            }
+            const data = {
+                count : count,
+                success : true
+            }
+            res.status(200).send(data);
+        }
+    });
 }
 
 const getProjectFromDB = (projectId, client, res) => {
