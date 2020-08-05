@@ -5,10 +5,11 @@ const {client} = require('./config');
 client.connect();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const helmet = require('helmet');
 
+app.use(helmet());
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
-
 app.use(bodyParser.json());
 app.use(cors());
 
