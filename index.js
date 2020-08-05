@@ -6,12 +6,14 @@ client.connect();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 
 app.use(helmet());
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(compression());
 
 const projectsController = require('./controllers/projectsController');
 const blogsController = require('./controllers/blogsController');
