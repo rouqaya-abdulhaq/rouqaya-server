@@ -127,8 +127,8 @@ const deleteProjectFromDB = (projectId, client, res) =>{
 
 
 const addProjectQuery = (project) =>{
-    return `INSERT INTO projects(title,info,url,github,img_url)
-    VALUES('${project.title}','${project.info}','${project.url}','${project.github}','${project.imgUrl}') 
+    return `INSERT INTO projects(title,info,url,github,img_url,disable_url)
+    VALUES('${project.title}','${project.info}','${project.url}','${project.github}','${project.imgUrl}','${project.disableUrl}') 
     RETURNING id`; 
 }
 
@@ -139,6 +139,6 @@ const getProjectsQuery = (count) =>{
 
 const editingProjectQuery = (editedProject) =>{
     return `UPDATE projects SET title = '${editedProject.title}',info = '${editedProject.info}',
-    url = '${editedProject.url}', github = '${editedProject.github}', img_url = '${editedProject.imgUrl}'
+    url = '${editedProject.url}', github = '${editedProject.github}', img_url = '${editedProject.imgUrl}', disable_url = '${editedProject.disableUrl}'
     WHERE id = '${editedProject.id}' RETURNING id`;
 }
